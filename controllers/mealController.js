@@ -27,9 +27,13 @@ const getMeal = async (req, res) => {
 
 const getAllMeals = async (req, res) => {
     try {
+        console.log('getAllMeals called');
+        console.log('User data:', req.userData);
         const meals = await Meal.find().sort({ week: 1, day: 1 });
+        console.log('Found meals:', meals.length);
         res.status(200).json(meals);
     } catch (err) {
+        console.log('getAllMeals error:', err.message);
         res.status(500).json({ error: err.message });
     }
 };
@@ -58,15 +62,20 @@ const updateMeal = async (req, res) => {
 const deleteMeal = async (req, res) => {
     try {
         const { id } = req.params;
+        console.log('Delete request for meal ID:', id);
+        console.log('User data:', req.userData);
         
         const meal = await Meal.findByIdAndDelete(id);
         
         if (!meal) {
+            console.log('Meal not found with ID:', id);
             return res.status(404).json({ error: "Meal not found" });
         }
         
+        console.log('Meal deleted successfully:', meal);
         res.status(200).json({ message: "Meal deleted successfully" });
     } catch (err) {
+        console.error('Delete meal error:', err.message);
         res.status(500).json({ error: err.message });
     }
 };
