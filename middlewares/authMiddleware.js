@@ -14,7 +14,7 @@ const auth=(req,res,next)=>{
     }
     const decoded=jwt.verify(token,process.env.SECRET_KEY);
     console.log(decoded)
-    req.userData={id:decoded.id,email:decoded.email};
+    req.userData={id:decoded.id,email:decoded.email,role:decoded.role};
     next()
     }catch(err){
         console.log('JWT verification failed:', err.message);

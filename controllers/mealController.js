@@ -12,19 +12,61 @@ const getMeal = async (req, res) => {
         
         const meal = await Meal.findOne({ week, day });
         
-       
-        
         if (!meal) {
             return res.status(404).json({ 
                 error: "Meal not found"
-                // searched: { week, day },
-                // available: allMeals.map(m => ({ week: m.week, day: m.day }))
             });
         }
 
         res.status(200).json(meal);
     } catch (err) {
         console.error("Error in getMeal:", err);
+        res.status(500).json({ error: err.message });
+    }
+};
+
+const getAllMeals = async (req, res) => {
+    try {
+        const meals = await Meal.find().sort({ week: 1, day: 1 });
+        res.status(200).json(meals);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+const updateMeal = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { week, day, breakfast, lunch, dinner } = req.body;
+        
+        const meal = await Meal.findByIdAndUpdate(
+            id,
+            { week, day, breakfast, lunch, dinner },
+            { new: true }
+        );
+        
+        if (!meal) {
+            return res.status(404).json({ error: "Meal not found" });
+        }
+        
+        res.status(200).json({ message: "Meal updated successfully", meal });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+const deleteMeal = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        const meal = await Meal.findByIdAndDelete(id);
+        
+        if (!meal) {
+            return res.status(404).json({ error: "Meal not found" });
+        }
+        
+        res.status(200).json({ message: "Meal deleted successfully" });
+    } catch (err) {
         res.status(500).json({ error: err.message });
     }
 };
@@ -49,4 +91,4 @@ const addMeal=async(req,res)=>{
     }
 }
 
-module.exports={getMeal,addMeal}
+module.exports={getMeal,addMeal,getAllMeals,updateMeal,deleteMeal}
