@@ -43,6 +43,10 @@ const updateMeal = async (req, res) => {
         const { id } = req.params;
         const { week, day, breakfast, lunch, dinner } = req.body;
         
+        console.log('Update request for meal ID:', id);
+        console.log('Update data:', { week, day, breakfast, lunch, dinner });
+        console.log('User data:', req.userData);
+        
         const meal = await Meal.findByIdAndUpdate(
             id,
             { week, day, breakfast, lunch, dinner },
@@ -50,11 +54,14 @@ const updateMeal = async (req, res) => {
         );
         
         if (!meal) {
+            console.log('Meal not found with ID:', id);
             return res.status(404).json({ error: "Meal not found" });
         }
         
+        console.log('Meal updated successfully:', meal);
         res.status(200).json({ message: "Meal updated successfully", meal });
     } catch (err) {
+        console.error('Update meal error:', err.message);
         res.status(500).json({ error: err.message });
     }
 };
