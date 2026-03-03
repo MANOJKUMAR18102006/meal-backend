@@ -47,10 +47,16 @@ const updateMeal = async (req, res) => {
         console.log('Update data:', { week, day, breakfast, lunch, dinner });
         console.log('User data:', req.userData);
         
+        // Check if another meal exists with the same week/day (excluding current meal)
+        const existingMeal = await Meal.findOne({ week, day, _id: { $ne: id } });
+        if (existingMeal) {
+            return res.status(400).json({ error: "Meal already exists for this week and day" });
+        }
+        
         const meal = await Meal.findByIdAndUpdate(
             id,
             { week, day, breakfast, lunch, dinner },
-            { new: true }
+            { new: true, runValidators: true }
         );
         
         if (!meal) {
