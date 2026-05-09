@@ -30,7 +30,7 @@ const getUser = async (req, res) => {
 
 const loginUser=async(req,res)=>{
     try{
-        const {email,password,role}=req.body
+        const {email,password}=req.body
         const user=await User.findOne({email});
         if(!user){
             res.status(400).json({error:"User not found"});
@@ -39,10 +39,6 @@ const loginUser=async(req,res)=>{
         const ispassword=await bcrypt.compare(password,user.password);
         if(!ispassword){
             res.status(400).json({error:"Invalid password"});
-            return;
-        }
-        if(user.role !== role){
-            res.status(403).json({error:`Access denied. This account is registered as ${user.role}`});
             return;
         }
         const token=jwt.sign(
